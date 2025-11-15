@@ -1,7 +1,10 @@
 package br.com.equipe4.app_produtos.service;
 
+import br.com.equipe4.app_produtos.mapper.UsuarioMapper;
 import br.com.equipe4.app_produtos.model.Usuario;
 import br.com.equipe4.app_produtos.repository.UsuarioRepository;
+import br.com.equipe4.app_produtos.service.dto.request.UsuarioRequestDto;
+import br.com.equipe4.app_produtos.service.dto.response.UsuarioResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,27 +18,31 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper mapper;
 
-    public Usuario criarUsuario(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public UsuarioResponseDto criarUsuario(UsuarioRequestDto usuarioRequestDto) {
+        Usuario usuario = mapper.paraUsuario(usuarioRequestDto);
+
+        return mapper.paraUsuarioResponseDto(usuarioRepository.save(usuario));
     }
 
-    public List<Usuario> listarUsuarios() {
+    public List<UsuarioResponseDto> listarUsuarios() {
         List<Usuario> listaUsuarios = usuarioRepository.findAll();
+
         if (listaUsuarios.isEmpty()) {
             log.warn("Nenhum usuário encontrado no banco de dados!");
             return Collections.emptyList();
         }
-        return listaUsuarios;
+        return listaUsuarios.stream().map(mapper::paraUsuarioResponseDto).toList();
     }
 
-    public void atualizarUsuario(Long id, Usuario usuarioAtualizado) {
+    public void atualizarUsuario(Long id, UsuarioRequestDto usuarioRequestDto) {
         usuarioRepository.findById(id).map(usuario -> {
             usuario.setId(usuario.getId());
-            usuario.setNome(usuarioAtualizado.getNome());
-            usuario.setEmail(usuarioAtualizado.getEmail());
-            usuario.setSenha(usuarioAtualizado.getSenha());
-            return usuarioRepository.save(usuario);
+            usuario.setNome(usuarioRequestDto.nome());
+            usuario.setEmail(usuarioRequestDto.email());
+            usuario.setSenha(usuarioRequestDto.senha());
+            return mapper.paraUsuarioResponseDto(usuarioRepository.save(usuario));
         }).orElseThrow(() -> new RuntimeException("Usuário não encontrado ID: " + id));
 
     }
