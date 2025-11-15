@@ -1,5 +1,6 @@
 package br.com.equipe4.app_produtos.service;
 
+import br.com.equipe4.app_produtos.exceptions.EntidadeNaoEncontradaException;
 import br.com.equipe4.app_produtos.mapper.UsuarioMapper;
 import br.com.equipe4.app_produtos.model.Usuario;
 import br.com.equipe4.app_produtos.repository.UsuarioRepository;
@@ -43,7 +44,7 @@ public class UsuarioService {
             usuario.setEmail(usuarioRequestDto.email());
             usuario.setSenha(usuarioRequestDto.senha());
             return mapper.paraUsuarioResponseDto(usuarioRepository.save(usuario));
-        }).orElseThrow(() -> new RuntimeException("Usuário não encontrado ID: " + id));
+        }).orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado ID: " + id));
 
     }
 
@@ -54,7 +55,7 @@ public class UsuarioService {
 
     private void verificarExistenciaDoUsuario(Long id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException("Usuário não encontrado!");
+            throw new EntidadeNaoEncontradaException("Usuário não encontrado!");
         }
     }
 }
