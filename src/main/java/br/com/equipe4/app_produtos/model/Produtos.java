@@ -28,4 +28,8 @@ public class Produtos {
     @Column(nullable = false)
     private BigDecimal preco;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User seller;
+
 }

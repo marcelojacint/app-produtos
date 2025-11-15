@@ -3,7 +3,7 @@ package br.com.equipe4.app_produtos.controller;
 import br.com.equipe4.app_produtos.model.Produtos;
 import br.com.equipe4.app_produtos.repository.ProdutosRepository;
 import br.com.equipe4.app_produtos.service.ProdutosService;
-import br.com.equipe4.app_produtos.service.dto.ProdutoDto;
+import br.com.equipe4.app_produtos.service.dto.ProdutoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +44,8 @@ public class ProdutosController {
      * @return
      */
     @GetMapping("/dto/{id}")
-    public ResponseEntity<ProdutoDto> listaProdutoDtoPorId(@PathVariable Long id) {
-        ProdutoDto produtoDto = produtosRepository.findByIdDto(id);
+    public ResponseEntity<ProdutoDTO> listaProdutoDtoPorId(@PathVariable Long id) {
+        ProdutoDTO produtoDto = produtosRepository.findByIdDto(id);
 
         final var produto = new Produtos();
         produto.setNome(produtoDto.nome());
@@ -65,9 +65,9 @@ public class ProdutosController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deletaProduto(@PathVariable Long id) {
         //Exemplo construindo Record
-        final var p = new ProdutoDto(1L, "dfs", "sdfa", new BigDecimal("25.6"));
+        final var p = new ProdutoDTO(1L, "dfs", "sdfa", new BigDecimal("25.6"));
         //Exemplo construindo Builder do record
-        final var p2 = ProdutoDto.builder()
+        final var p2 = ProdutoDTO.builder()
                 .id(1L)
                 .codigoBarras("dfs")
                 .nome("sdfa")
