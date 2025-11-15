@@ -1,11 +1,14 @@
 package br.com.equipe4.app_produtos.controller;
 
 import br.com.equipe4.app_produtos.model.Produtos;
+import br.com.equipe4.app_produtos.model.User;
 import br.com.equipe4.app_produtos.repository.ProdutosRepository;
 import br.com.equipe4.app_produtos.service.ProdutosService;
 import br.com.equipe4.app_produtos.service.dto.ProdutoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,7 +24,10 @@ public class ProdutosController {
     private final ProdutosService produtosService;
 
     @PostMapping("produto")
+    @PreAuthorize("hasRole('ADMIN', 'SELLER')")
     public ResponseEntity<Produtos> criaProduto(@RequestBody Produtos produto) {
+        User seller = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        produto.setSeller(seller);
         Produtos saved = produtosRepository.save(produto);
         return ResponseEntity.ok(saved);
     }
@@ -51,18 +57,22 @@ public class ProdutosController {
         produto.setNome(produtoDto.nome());
         produto.setPreco(produtoDto.preco());
         produto.setCodigoBarras(produtoDto.codigoBarras());
+        User seller = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        produto.setSeller(seller);
         produtosRepository.saveAndFlush(produto);
 
         return ResponseEntity.ok(produtoDto);
     }
 
     @PutMapping("atualiza")
+    @PreAuthorize("hasRole('ADMIN') or @produtosService.isOwner(authentication, #produto.id)")
     public ResponseEntity<Optional<Produtos>> atualizaProduto(@RequestBody Produtos produto) {
         final var produtoExistente = produtosService.atualizaProduto(produto);
         return ResponseEntity.ok(produtoExistente);
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN') or @produtosService.isOwner(authentication, #id)")
     public ResponseEntity<Void> deletaProduto(@PathVariable Long id) {
         //Exemplo construindo Record
         final var p = new ProdutoDto(1L, "dfs", "sdfa", new BigDecimal("25.6"));
