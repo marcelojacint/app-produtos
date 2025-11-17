@@ -21,8 +21,15 @@ public class Inventory {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(name = "min_level", nullable = false)
+    private Integer minLevel = 5; // padrão que pode ser alterado
+
     @OneToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Products product;
+
+    public boolean isLowStock() {
+        return this.quantity <= this.minLevel;
+    }
 
 }
