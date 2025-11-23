@@ -1,5 +1,6 @@
 package br.com.equipe4.app_produtos.common;
 
+import br.com.equipe4.app_produtos.infra.exceptions.EmptyOrderException;
 import br.com.equipe4.app_produtos.infra.exceptions.EntityNotFoundException;
 import br.com.equipe4.app_produtos.service.dto.errorDto.ValidationError;
 import br.com.equipe4.app_produtos.service.dto.errorDto.ErrorResponse;
@@ -34,7 +35,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handlerRegistroDuplicadoException(EntityNotFoundException e) {
+    public ErrorResponse handlerEntityNotFoundException(EntityNotFoundException e) {
+        return ErrorResponse.conflict(e.getMessage());
+    }
+
+    @ExceptionHandler(EmptyOrderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerEmptyOrderException(EmptyOrderException e) {
         return ErrorResponse.conflict(e.getMessage());
     }
 }
