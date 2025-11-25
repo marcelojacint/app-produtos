@@ -38,4 +38,3 @@ mvn spring-boot:run
 - Banco H2 em memória (dados são perdidos ao reiniciar)
 - Configurações padrão do Spring Boot
 - API RESTful com tratamento de erros
-- Documentação Swagger/OpenAPI (se configurada)
